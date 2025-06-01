@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
-import '@/styles/globals.css';
+import "./Home.css";
 
 type CharacterCard = {
   id: string;
@@ -39,86 +39,75 @@ const defaultSus: CharacterCard[] = [
 ];
 
 function drawCards<T>(list: T[], count: number): T[] {
-  // 카드가 충분하지 않으면 가능한 만큼만 반환
   if (list.length <= count) return [...list];
-  
   const shuffled = [...list].sort(() => 0.5 - Math.random());
   return shuffled.slice(0, count);
 }
 
-function Player({ 
-  playerIndex, 
-  gongHand, 
-  suHand, 
-  selectedGong, 
-  selectedSu, 
-  setSelectedGong, 
-  setSelectedSu 
+function Player({
+  playerIndex,
+  gongHand,
+  suHand,
+  selectedGong,
+  selectedSu,
+  setSelectedGong,
+  setSelectedSu,
 }: PlayerProps) {
-  // 카드 선택 토글 함수 추가
   const toggleGongSelection = (gong: CharacterCard) => {
-    if (selectedGong && selectedGong.id === gong.id) {
-      setSelectedGong(null);
-    } else {
-      setSelectedGong(gong);
-    }
+    setSelectedGong(selectedGong?.id === gong.id ? null : gong);
   };
 
   const toggleSuSelection = (su: CharacterCard) => {
-    if (selectedSu && selectedSu.id === su.id) {
-      setSelectedSu(null);
-    } else {
-      setSelectedSu(su);
-    }
+    setSelectedSu(selectedSu?.id === su.id ? null : su);
   };
 
   return (
-    <div className="mb-10 w-full">
-      <h2 className="text-2xl font-bold mb-2 text-center">플레이어 {playerIndex + 1}</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+    <div className="player-container">
+      <h2 className="player-title">플레이어 {playerIndex + 1}</h2>
+      <div className="card-section">
         <div>
-          <h3 className="text-xl font-semibold text-pink-600 mb-2">공 카드</h3>
+          <h3 className="card-heading gong">공 카드</h3>
           <div className="card-container">
-  {gongHand.map((g) => (
-    <Card
-      key={g.id}
-      className={`card-hover ${selectedGong?.id === g.id ? 'card-highlight-pink' : ''}`}
-      onClick={() => toggleGongSelection(g)}
-    >
-      <CardContent>
-        <h4 className="card-name">{g.name}</h4>
-        <p className="card-trait">{g.trait}</p>
-      </CardContent>
-    </Card>
-  ))}
-</div>
+            {gongHand.map((g) => (
+              <Card
+                key={g.id}
+                className={`card-hover ${selectedGong?.id === g.id ? "highlight-gong" : ""}`}
+                onClick={() => toggleGongSelection(g)}
+              >
+                <CardContent>
+                  <h4 className="card-name">{g.name}</h4>
+                  <p className="card-trait">{g.trait}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </div>
         <div>
-          <h3 className="text-xl font-semibold text-blue-600 mb-2">수 카드</h3>
+          <h3 className="card-heading su">수 카드</h3>
           <div className="card-container">
             {suHand.map((s) => (
               <Card
                 key={s.id}
-               className={`card-hover ${selectedSu?.id === s.id ? 'card-highlight-blue' : ''}`}
-              onClick={() => toggleSuSelection(s)}
+                className={`card-hover ${selectedSu?.id === s.id ? "highlight-su" : ""}`}
+                onClick={() => toggleSuSelection(s)}
               >
-              <CardContent className="p-4">
-                <h4 className="card-name">{s.name}</h4>
-                <p className="card-trait">{s.trait}</p>
-              </CardContent>
+                <CardContent>
+                  <h4 className="card-name">{s.name}</h4>
+                  <p className="card-trait">{s.trait}</p>
+                </CardContent>
               </Card>
             ))}
           </div>
         </div>
       </div>
       {selectedGong && selectedSu && (
-  <div className="result-card mx-auto max-w-md my-6">
-    <h2 className="text-xl font-semibold mb-2 text-pink-600">공: {selectedGong.name}</h2>
-    <p className="mb-4 text-gray-700">{selectedGong.trait}</p>
-    <h2 className="text-xl font-semibold mb-2 text-blue-600">수: {selectedSu.name}</h2>
-    <p className="text-gray-700">{selectedSu.trait}</p>
-  </div>
-)}
+        <div className="result-card">
+          <h2 className="result-title gong">공: {selectedGong.name}</h2>
+          <p className="result-trait">{selectedGong.trait}</p>
+          <h2 className="result-title su">수: {selectedSu.name}</h2>
+          <p className="result-trait">{selectedSu.trait}</p>
+        </div>
+      )}
     </div>
   );
 }
@@ -132,25 +121,21 @@ type PlayerState = {
 
 export default function Home() {
   const [players, setPlayers] = useState<PlayerState[]>([]);
-  const [remainingGongs, setRemainingGongs] = useState<CharacterCard[]>([...defaultGongs]);
-  const [remainingSus, setRemainingSus] = useState<CharacterCard[]>([...defaultSus]);
+  const [remainingGongs, setRemainingGongs] = useState([...defaultGongs]);
+  const [remainingSus, setRemainingSus] = useState([...defaultSus]);
 
   const addPlayer = () => {
-    // 남은 카드가 충분한지 확인
     if (remainingGongs.length < 2 || remainingSus.length < 2) {
       alert("남은 카드가 부족합니다!");
       return;
     }
 
-    // 플레이어 카드 뽑기
     const newGongHand = drawCards(remainingGongs, 2);
     const newSuHand = drawCards(remainingSus, 2);
 
-    // 남은 카드 업데이트
-    setRemainingGongs(remainingGongs.filter(g => !newGongHand.some(card => card.id === g.id)));
-    setRemainingSus(remainingSus.filter(s => !newSuHand.some(card => card.id === s.id)));
+    setRemainingGongs(remainingGongs.filter((g) => !newGongHand.includes(g)));
+    setRemainingSus(remainingSus.filter((s) => !newSuHand.includes(s)));
 
-    // 새 플레이어 추가
     setPlayers([
       ...players,
       {
@@ -168,7 +153,6 @@ export default function Home() {
     setPlayers(updatedPlayers);
   };
 
-  // 게임 리셋 기능 추가
   const resetGame = () => {
     setPlayers([]);
     setRemainingGongs([...defaultGongs]);
@@ -176,30 +160,25 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-pink-50 p-4">
-      <h1 className="text-3xl font-bold mb-6 text-center">
-        저런 공에는 이런 수가 딱이야! 💕
-      </h1>
+    <div className="main-container">
+      <h1 className="main-title">저런 공에는 이런 수가 딱이야! 💕</h1>
 
-      <div className="flex gap-4 mb-6">
-        <Button onClick={addPlayer} className="text-lg" disabled={remainingGongs.length < 2 || remainingSus.length < 2}>
+      <div className="button-group">
+        <Button onClick={addPlayer} disabled={remainingGongs.length < 2 || remainingSus.length < 2}>
           플레이어 추가 ➕
         </Button>
-        <Button onClick={resetGame} className="text-lg bg-red-500 hover:bg-red-600">
+        <Button onClick={resetGame} className="reset-button">
           게임 리셋 🔄
         </Button>
       </div>
 
-      {/* 남은 카드 정보 표시 */}
-      <div className="mb-6 text-center">
-        <p>남은 카드: 공 {remainingGongs.length}장, 수 {remainingSus.length}장</p>
+      <div className="card-count">
+        남은 카드: 공 {remainingGongs.length}장, 수 {remainingSus.length}장
       </div>
 
-      <div className="w-full max-w-6xl">
+      <div className="players-area">
         {players.length === 0 ? (
-          <div className="text-center text-gray-500 py-8">
-            플레이어를 추가해서 게임을 시작하세요!
-          </div>
+          <div className="no-player-msg">플레이어를 추가해서 게임을 시작하세요!</div>
         ) : (
           players.map((player, index) => (
             <Player

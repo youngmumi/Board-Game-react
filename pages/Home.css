@@ -1,0 +1,159 @@
+/* Home.css */
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #ffeef2;
+  color: #333;
+}
+
+.main-container {
+  min-height: 100vh;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.main-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.button-group {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.reset-button {
+  background-color: #e53e3e;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.card-count {
+  margin-bottom: 1rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+.players-area {
+  width: 100%;
+  max-width: 1100px;
+}
+
+.no-player-msg {
+  text-align: center;
+  color: #777;
+  padding: 2rem;
+}
+
+.player-container {
+  margin-bottom: 2rem;
+  width: 100%;
+  border-top: 2px dashed #ddd;
+  padding-top: 1.5rem;
+}
+
+.player-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.card-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.card-heading {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.card-heading.gong {
+  color: #d63384;
+}
+
+.card-heading.su {
+  color: #1e40af;
+}
+
+.card-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.card-hover {
+  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 0.75rem;
+  cursor: pointer;
+  background-color: white;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.card-hover:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.highlight-gong {
+  border-color: #d63384;
+  background-color: #fff0f5;
+}
+
+.highlight-su {
+  border-color: #1e40af;
+  background-color: #e0e7ff;
+}
+
+.card-name {
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.card-trait {
+  font-size: 0.95rem;
+  color: #555;
+  margin-top: 0.25rem;
+}
+
+.result-card {
+  background-color: #fff;
+  border-radius: 10px;
+  border: 2px solid #ddd;
+  padding: 1rem;
+  max-width: 500px;
+  margin: 1.5rem auto 0 auto;
+  text-align: center;
+}
+
+.result-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-top: 0.5rem;
+}
+
+.result-title.gong {
+  color: #d63384;
+}
+
+.result-title.su {
+  color: #1e40af;
+}
+
+.result-trait {
+  color: #444;
+  margin-bottom: 0.5rem;
+}
