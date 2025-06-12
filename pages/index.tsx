@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -39,8 +39,7 @@ const defaultSus: CharacterCard[] = [
 ];
 
 function drawCards<T>(list: T[], count: number): T[] {
-  if (list.length <= count) return [...list];
-  const shuffled = [...list].sort(() => 0.5 - Math.random());
+  const shuffled = [...list].sort(() => Math.random() - 0.5);
   return shuffled.slice(0, count);
 }
 
@@ -53,12 +52,14 @@ function Player({
   setSelectedGong,
   setSelectedSu,
 }: PlayerProps) {
-  const toggleGongSelection = (gong: CharacterCard) => {
-    setSelectedGong(selectedGong?.id === gong.id ? null : gong);
+  const toggleGongSelection = (card: CharacterCard) => {
+    if (selectedGong) return; // 이미 선택 시 변경 불가
+    setSelectedGong(card);
   };
 
-  const toggleSuSelection = (su: CharacterCard) => {
-    setSelectedSu(selectedSu?.id === su.id ? null : su);
+  const toggleSuSelection = (card: CharacterCard) => {
+    if (selectedSu) return;
+    setSelectedSu(card);
   };
 
   return (
@@ -82,6 +83,7 @@ function Player({
             ))}
           </div>
         </div>
+
         <div>
           <h3 className="card-heading su">수 카드</h3>
           <div className="card-container">
@@ -100,6 +102,7 @@ function Player({
           </div>
         </div>
       </div>
+
       {selectedGong && selectedSu && (
         <div className="result-card">
           <h2 className="result-title gong">공: {selectedGong.name}</h2>
@@ -124,7 +127,7 @@ export default function Home() {
   const [remainingGongs, setRemainingGongs] = useState([...defaultGongs]);
   const [remainingSus, setRemainingSus] = useState([...defaultSus]);
 
-  const addPlayer = () => {
+  const addPlayer = useCallback(() => {
     if (remainingGongs.length < 2 || remainingSus.length < 2) {
       alert("남은 카드가 부족합니다!");
       return;
@@ -133,11 +136,11 @@ export default function Home() {
     const newGongHand = drawCards(remainingGongs, 2);
     const newSuHand = drawCards(remainingSus, 2);
 
-    setRemainingGongs(remainingGongs.filter((g) => !newGongHand.includes(g)));
-    setRemainingSus(remainingSus.filter((s) => !newSuHand.includes(s)));
+    setRemainingGongs((prev) => prev.filter((g) => !newGongHand.find((ng) => ng.id === g.id)));
+    setRemainingSus((prev) => prev.filter((s) => !newSuHand.find((ns) => ns.id === s.id)));
 
-    setPlayers([
-      ...players,
+    setPlayers((prev) => [
+      ...prev,
       {
         gongHand: newGongHand,
         suHand: newSuHand,
@@ -145,12 +148,14 @@ export default function Home() {
         selectedSu: null,
       },
     ]);
-  };
+  }, [remainingGongs, remainingSus]);
 
   const updatePlayer = (index: number, updated: Partial<PlayerState>) => {
-    const updatedPlayers = [...players];
-    updatedPlayers[index] = { ...updatedPlayers[index], ...updated };
-    setPlayers(updatedPlayers);
+    setPlayers((prev) => {
+      const copy = [...prev];
+      copy[index] = { ...copy[index], ...updated };
+      return copy;
+    });
   };
 
   const resetGame = () => {
